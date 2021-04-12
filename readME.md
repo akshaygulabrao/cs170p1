@@ -39,9 +39,9 @@ The there is a # above the 9 (Not a boundary).
 
 The 9 and # above swap. For example, if we execute this in the goal state, the state will be:
 
-1  2  3
-4  5  9
-7  8  6
+1  2  3\
+4  5  9\
+7  8  6\
 
 
 
