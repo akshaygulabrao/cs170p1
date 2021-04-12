@@ -41,7 +41,7 @@ The 9 and # above swap. For example, if we execute this in the goal state, the s
 
 1  2  3\
 4  5  9\
-7  8  6\
+7  8  6
 
 
 
