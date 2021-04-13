@@ -2,7 +2,7 @@ import numpy as np
 import anytree
 
 class state:
-    discovered_states = {} 
+    discovered_states =set() 
     def swapLeft(self):
         return 1 
     def swapRight(self):
@@ -14,7 +14,8 @@ class state:
     def __init__(self,prev_operation_list,current_state):
        self.prev_operation_list = prev_operation_list;
        self.current_state = current_state
-       print(current_state.split())
+       self.discovered_states.add(current_state)
+       #print(np.asarray(list(map(int,current_state.split()))))
 
 class puzzle:
     def set_custom_initial_state(self,state):
