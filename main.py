@@ -1,10 +1,24 @@
 import numpy as np
 import anytree
+import math
 
 class state:
     discovered_states =set() 
     def swapLeft(self):
-        return 1 
+        if self.marker % self.dim == 0:
+            return
+        else: 
+            #self.current_state_np[self.marker],
+            #self.current_state_np[self.marker-1]=self.current_state_np[self.marker-1],
+            #self.current_state_np[self.marker]
+            print(self.current_state_np[self.marker])
+            curr_string = ' '.join(map(str,self.current_state_np)) 
+            if curr_string not in self.discovered_states:
+                self.discovered_states.add(curr_string)
+                print(self.discovered_states)
+                state(self,self.prevMoveList.append(self.current_state_np,'swapLeft'))
+            else:
+                return
     def swapRight(self):
         return 1
     def swapUp(self):
@@ -13,6 +27,7 @@ class state:
         return 2 
     
     def checkGoalState(self):
+        #checks if the list is sorted
         return np.all(self.current_state_np[:-1] <= self.current_state_np[1:])
 
     def __init__(self,prev_operation_list,current_state_string):
@@ -20,7 +35,10 @@ class state:
        self.current_state_string = current_state_string
        self.discovered_states.add(current_state_string)
        self.current_state_np = np.asarray(list(map(int,current_state_string.split())))
-       print(self.checkGoalState())
+       self.marker = np.argmax(self.current_state_np)
+       self.dim = math.sqrt(self.current_state_np[self.marker])
+       self.swapLeft()
+     
 
 class puzzle:
     def set_custom_initial_state(self,state):
