@@ -11,11 +11,16 @@ class state:
         return 2
     def swapDown(self):
         return 2 
-    def __init__(self,prev_operation_list,current_state):
+    
+    def checkGoalState(self):
+        return np.all(self.current_state_np[:-1] <= self.current_state_np[1:])
+
+    def __init__(self,prev_operation_list,current_state_string):
        self.prev_operation_list = prev_operation_list;
-       self.current_state = current_state
-       self.discovered_states.add(current_state)
-       #print(np.asarray(list(map(int,current_state.split()))))
+       self.current_state_string = current_state_string
+       self.discovered_states.add(current_state_string)
+       self.current_state_np = np.asarray(list(map(int,current_state_string.split())))
+       print(self.checkGoalState())
 
 class puzzle:
     def set_custom_initial_state(self,state):
