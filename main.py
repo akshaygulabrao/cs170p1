@@ -5,70 +5,53 @@ import math
 class state:
     discovered_states =set() 
     def swapLeft(self):
-        print('swpLft')
         if self.marker % self.dim != 0:
             self.current_state_np[self.marker],self.current_state_np[self.marker-1]=self.current_state_np[self.marker-1],self.current_state_np[self.marker] 
             string_state = self.arrayToString(self.current_state_np)
             self.prevMovelist.append((string_state,'Swap Right'))
             if string_state in self.discovered_states:
-                print('End of tree')
                 return 0
             else:
                 self.discovered_states.add(string_state)
-                print('newStateAdded')
-                print(string_state)
                 state(self.prevMovelist,string_state)
 
     def swapRight(self):
-        print('swpRgt')
         if self.marker % self.dim != self.dim -1:
             self.current_state_np[self.marker],self.current_state_np[self.marker+1]=self.current_state_np[self.marker+1],self.current_state_np[self.marker]
             string_state = self.arrayToString(self.current_state_np)
             self.prevMovelist.append((string_state,'Swap Right'))
             if string_state in self.discovered_states:
-                print('End of tree')
                 return 0
             else:
                 self.discovered_states.add(string_state)
-                print('newStateAdded')
-                print(string_state)
                 state(self.prevMovelist,string_state)
 
             return 1
         else:
             return 2
     def swapUp(self):
-        print('SwapUp')
         if self.marker - self.dim > 0:
             self.current_state_np[self.marker],self.current_state_np[self.marker - self.dim]= self.current_state_np[self.marker - self.dim],self.current_state_np[self.marker]
             string_state = self.arrayToString(self.current_state_np)
             print(string_state)
             self.prevMovelist.append((string_state,'Swap Up'))
             if string_state in self.discovered_states:
-                print('End of tree')
                 return 0
             else:
                 self.discovered_states.add(string_state)
-                print('newStateAdded')
-                print(string_state)
                 state(self.prevMovelist,string_state)
                 return 1
         else:
             return 2
     def swapDown(self):
-        print('SwapDown')
         if self.marker + self.dim < self.dim ** 2 - 1:
             self.current_state_np[self.marker],self.current_state_np[self.marker + self.dim]= self.current_state_np[self.marker + self.dim],self.current_state_np[self.marker]
             string_state = self.arrayToString(self.current_state_np)
-            print(string_state)
             self.prevMovelist.append((string_state,'Swap Down'))
             if string_state in self.discovered_states:
-                print('End of tree')
                 return 0
             else:
                 self.discovered_states.add(string_state)
-                print('newStateAdded')
-                print(string_state)
                 state(self.prevMovelist,string_state)
                 return 1
         else:
@@ -86,16 +69,17 @@ class state:
     def __init__(self,prevMovelist,current_state_string):
        self.prevMovelist = prevMovelist;
        self.current_state_string = current_state_string
+       print(self.current_state_string)
        self.discovered_states.add(current_state_string)
        self.current_state_np = self.stringToArray(current_state_string)
        self.marker = np.argmax(self.current_state_np)
        self.dim = int(math.sqrt(self.current_state_np[self.marker]))
        if self.checkGoalState():
            return
-       print(self.swapUp())
-       print(self.swapRight())
-       print(self.swapLeft())
-       print(self.swapDown())
+       self.swapUp()
+       self.swapRight()
+       self.swapLeft()
+       self.swapDown()
        
      
 
@@ -118,8 +102,8 @@ class puzzle:
         np.set_printoptions(linewidth=linewidth_dict[dim])
         self.initial_state = self.goal_state.copy() 
         self.set_random_initial_state()
-p1 = puzzle(2)
+p1 = puzzle(3)
 #print(p1.initial_state)
-p1.set_custom_initial_state(np.asarray(list(map(int,'1 2 4 3'.split()))))
+#p1.set_custom_initial_state(np.asarray(list(map(int,'1 2 4 3'.split()))))
 p1.solve()
 
