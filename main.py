@@ -18,11 +18,12 @@ class State:
         full_expansion = []
         full_expansion.append(self.swapDown())
         full_expansion.append(self.swapUp())
-        full_expansion.append(self.swapLeft())
         full_expansion.append(self.swapRight())
+        full_expansion.append(self.swapLeft())
+        print(full_expansion)
         return full_expansion 
     def swapDown(self):
-        p = self.state   
+        p = self.state.copy()  
         #index of emptyTile
         i = self.emptyTile
         #maximum index of array(to check is swapDown is valid)
@@ -30,53 +31,42 @@ class State:
         #return new state if swapDown is legal, else return exact same state
         if i + self.dim <= m:
             p[i],p[i + self.dim] = p[i + self.dim],p[i]
-            self.prevMoveList = self.prevMoveList + ' Down'
-            self.state = p
             new_state = arrayToString(p) 
-            print(self.prevMoveList, new_state) 
-            return (self.prevMoveList, new_state)           
+            return (self.prevMoveList + 'Down', new_state)
 
-        print(self.prevMoveList, self.state) 
-        return (self.prevMoveList, self.state) 
+        return (self.prevMoveList, arrayToString(self.state)) 
          
     def swapUp(self):
-        p = self.state   
+        p = self.state.copy() 
         i = self.emptyTile
         #return new state if swapUp is legal, else return exact same state
         if i -  self.dim >= 0:
             p[i],p[i + self.dim] = p[i + self.dim],p[i]
-            self.prevMoveList = self.prevMoveList + ' Up'
-            self.state = p
             new_state = arrayToString(p) 
-            return (self.prevMoveList, new_state)           
-        return (self.prevMoveList, self.state) 
+            return (self.prevMoveList + 'Up', new_state)
+        return (self.prevMoveList, arrayToString(self.state)) 
 
     def swapRight(self):
         #locals to make swap shorter
-        p = self.state   
+        p = self.state.copy()   
         i = self.emptyTile
         #return new state if swapRight is legal, else return exact same state
         if i %  self.dim != self.dim - 1:
-            p[i],p[i + self.dim] = p[i + self.dim],p[i]
-            self.prevMoveList = self.prevMoveList + ' Right'
-            self.state = p
+            p[i],p[i + 1] = p[i + 1],p[i]
             new_state = arrayToString(p) 
-            return (self.prevMoveList, new_state)           
-        return (self.prevMoveList, self.state) 
+            return (self.prevMoveList + 'Right', new_state)           
+        return (self.prevMoveList, arrayToString(self.state)) 
 
 
     def swapLeft(self):
-        p = self.state   
+        p = self.state.copy()   
         i = self.emptyTile
         #return new state if swapLeft is legal, else return exact same state
         if i %  self.dim != 0:
-            p[i],p[i + self.dim] = p[i + self.dim],p[i]
-            self.prevMoveList = self.prevMoveList + ' Left'
-            self.state = p
+            p[i],p[i -1] = p[i -1],p[i]
             new_state = arrayToString(p) 
-            return (self.prevMoveList, new_state)           
-        return (self.prevMoveList, self.state) 
-
+            return (self.prevMoveList + 'Left', new_state)           
+        return (self.prevMoveList, arrayToString(self.state)) 
 
 class Puzzle:
     frontier = queue.PriorityQueue() 
@@ -90,7 +80,12 @@ class Puzzle:
         while not self.frontier.empty():
             explored_state = self.frontier.get()
             s1 = State(explored_state[1],explored_state[2],self.dim)
-            s1.expand()
+            new_states = s1.expand()
+            for i in new_states:
+                if i[1] not in self.explored_set:
+                    self.explored_set.add(i[1])
+            print(self.explored_set)
+
         return 0
 
     def __init__(self,dim,heuristic):
