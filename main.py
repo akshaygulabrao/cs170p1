@@ -21,11 +21,7 @@ class State:
         self.dim = dim
 
     def expand(self):
-        full_expansion = []
-        full_expansion.append(self.swapDown())
-        full_expansion.append(self.swapUp())
-        full_expansion.append(self.swapRight())
-        full_expansion.append(self.swapLeft())
+        full_expansion = [self.swapDown(), self.swapUp(), self.swapRight(), self.swapLeft()]
         #   print(full_expansion)
         return full_expansion
 
@@ -39,9 +35,9 @@ class State:
         if i + self.dim <= m:
             p[i], p[i + self.dim] = p[i + self.dim], p[i]
             new_state = arrayToString(p)
-            return (self.prevMoveList + 'Down', new_state)
+            return self.prevMoveList + 'Down', new_state
 
-        return (self.prevMoveList, arrayToString(self.state))
+        return self.prevMoveList, arrayToString(self.state)
 
     def swapUp(self):
         p = self.state.copy()
@@ -50,8 +46,8 @@ class State:
         if i - self.dim >= 0:
             p[i], p[i - self.dim] = p[i - self.dim], p[i]
             new_state = arrayToString(p)
-            return (self.prevMoveList + 'Up', new_state)
-        return (self.prevMoveList, arrayToString(self.state))
+            return self.prevMoveList + 'Up', new_state
+        return self.prevMoveList, arrayToString(self.state)
 
     def swapRight(self):
         # locals to make swap shorter
@@ -61,8 +57,8 @@ class State:
         if i % self.dim != self.dim - 1:
             p[i], p[i + 1] = p[i + 1], p[i]
             new_state = arrayToString(p)
-            return (self.prevMoveList + 'Right', new_state)
-        return (self.prevMoveList, arrayToString(self.state))
+            return self.prevMoveList + 'Right', new_state
+        return self.prevMoveList, arrayToString(self.state)
 
     def swapLeft(self):
         p = self.state.copy()
@@ -71,8 +67,8 @@ class State:
         if i % self.dim != 0:
             p[i], p[i - 1] = p[i - 1], p[i]
             new_state = arrayToString(p)
-            return (self.prevMoveList + 'Left', new_state)
-        return (self.prevMoveList, arrayToString(self.state))
+            return self.prevMoveList + 'Left', new_state
+        return self.prevMoveList, arrayToString(self.state)
 
 
 class Puzzle:
@@ -99,7 +95,6 @@ class Puzzle:
                         self.explored_set.add(i[1])
                         self.frontier.put((0, i[0], stringToArray(i[1])))
                 # print(self.explored_set)
-
 
     def __init__(self, dim, heuristic):
         self.dim = dim
