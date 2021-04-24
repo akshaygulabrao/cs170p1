@@ -142,9 +142,22 @@ class Puzzle:
         self.initial_state = solved_state.copy()
         np.random.shuffle(self.initial_state)
         linewidth_dict = {2: 5, 3: 7, 4: 15, 5: 17}
-        # np.set_printoptions(linewidth=linewidth_dict[dim])
+        np.set_printoptions(linewidth=linewidth_dict[dim])
 
-
-p1 = Puzzle(3, 'euclidean_distance')
-p1.set_custom_initial_state('8 6 7 2 5 4 3 9 1')
-print(p1.graph_search())
+print('Welcome to 862007974 8 puzzle solver.')
+print('Type 1 to use a default puzzle, or 2 to enter your own puzzle')
+default_custom = input()
+print('Enter algorithm choice')
+print('1. UCS\n2. Misplaced Tiles\n3. Euclidean Distance')
+algorithm = input()
+#print(type(algorithm))
+algorithm_dict = {1 : 'ucs',2: 'misplaced_tiles',3: 'euclidean_distance'}
+if default_custom == '2':
+    print("Enter your array as a string Ex: '8 6 7 2 5 4 3 9 1'")
+    print("9 is the blank space")
+    array = input()
+else:
+    #print(algorithm_dict[algorithm])
+    p1 = Puzzle(3, algorithm_dict[int(algorithm)])
+    p1.set_custom_initial_state('8 6 7 2 5 4 3 9 1')
+    print(p1.graph_search())
