@@ -20,11 +20,17 @@ def stringToArray(string):
 
 def arrayToString(nparray):
     return ' '.join(map(str, nparray))
-
-
+def arrayPrint(a,dim):
+    for i in range(dim):
+        for j in range(dim):
+            if a[i*dim + j] != 9:
+                print(str(a[i*dim + j]),end=' ')
+            else:
+                print(str(a[i*dim + j]),end = ' ')
 class State:
     def __init__(self, prevMoveList, state, dim, heuristic_type):
         self.state = state
+        print(self.state)
         self.heuristic = 0
         self.heuristic_type = heuristic_type
         self.prevMoveList = prevMoveList
@@ -121,9 +127,14 @@ class Puzzle:
             if self.frontier.empty():
                 return 'failure'
             else:
+
                 explored_state = self.frontier.get()
+                print(f'The best state to expand with g(n)={explored_state[1]}'
+                      f' h(n) = {explored_state[0] - explored_state[1]}')
+
                 s1 = State(explored_state[2], explored_state[3], self.dim,
                            self.heuristic)
+                arrayPrint(s1.state,s1.dim)
                 if np.array_equal(s1.state, self.goal_state):
                     return 'success', s1.prevMoveList
                 new_states = s1.expand()
