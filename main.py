@@ -2,7 +2,7 @@ import numpy as np
 import queue
 import math
 
-
+#http://www.cs.rpi.edu/academics/courses/fall00/ai/assignments/assign3heuristics.html
 # https://docs.python.org/3/library/queue.html
 # https://numpy.org/doc/stable/reference/generated/numpy.argmax.html
 # https://stackoverflow.com/questions/34472814/use-a-any-or-a-all
@@ -21,13 +21,7 @@ def stringToArray(string):
 
 def arrayToString(nparray):
     return ' '.join(map(str, nparray))
-def arrayPrint(a,dim):
-    for i in range(dim):
-        for j in range(dim):
-            if a[i*dim + j] != 9:
-                print(str(a[i*dim + j]),end=' ')
-            else:
-                print(str(a[i*dim + j]),end = ' ')
+
 class State:
     def __init__(self, prevMoveList, state, dim, heuristic_type):
         self.state = state
@@ -124,29 +118,35 @@ class Puzzle:
     def graph_search(self):
         expanded_nodes = 0
         maximum_frontier_size = 0
+        
         self.frontier.put((0, 0, '', self.initial_state))
         self.explored_set = set()
         while 1:
             # print(self.frontier.queue)
             maximum_frontier_size = max(maximum_frontier_size,self.frontier.qsize())
             if self.frontier.empty():
+                print("maximum frontier size: ", maximum_frontier_size)
+                print("expanded nodes: ", expanded_nodes)
+                depth = sum(1 for letter in s1.prevMoveList if letter.isupper())
+                print('# of Moves: ', depth)
                 return 'failure'
             else:
                 explored_state = self.frontier.get()
-                print(f'The best state to expand with g(n)={explored_state[1]}'
-                      f' h(n) = {explored_state[0] - explored_state[1]} is')
                 s1 = State(explored_state[2], explored_state[3], self.dim,
                            self.heuristic)
-                print(s1.state,sep= " ")
 
+                print(s1.state)
                 if np.array_equal(s1.state, self.goal_state):
                     print("maximum frontier size: ",maximum_frontier_size)
                     print("expanded nodes: ",expanded_nodes)
                     depth = sum(1 for letter in s1.prevMoveList if letter.isupper())
-                    print('Depth: ',depth)
+                    print('# of Moves: ',depth)
                     return 'success', s1.prevMoveList
                 else:
+
                     print('Expanding this node...')
+                    print(f'The best state to expand with g(n)={explored_state[1]}'
+                          f' h(n) = {explored_state[0] - explored_state[1]} is')
                     new_states = s1.expand()
                     expanded_nodes += 1
                     for i in new_states:
@@ -168,6 +168,7 @@ class Puzzle:
 
 print('Welcome to 862007974 8 puzzle solver.')
 print('Type 1 to use a default puzzle, or 2 to enter your own puzzle')
+print('9 is the blank space')
 default_custom = input()
 #default_custom = 1
 print('Enter algorithm choice')
