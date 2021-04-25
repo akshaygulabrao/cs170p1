@@ -52,7 +52,8 @@ class State:
             for i in range(0,len(arr)):
                 destination = arr[i] - 1
                 source = i
-                heuristic += math.hypot(abs(destination - source) // 3,abs(destination - source) % 3)
+                heuristic += math.hypot(abs(destination - source) // 3,
+                                        abs(destination - source) % 3)
         self.heuristic = heuristic
 
     def expand(self):
@@ -121,28 +122,38 @@ class Puzzle:
         self.initial_state = stringToArray(string)
 
     def graph_search(self):
+        expanded_nodes = 0
+        maximum_frontier_size = 0
         self.frontier.put((0, 0, '', self.initial_state))
         self.explored_set = set()
         while 1:
             # print(self.frontier.queue)
+            maximum_frontier_size = max(maximum_frontier_size,self.frontier.qsize())
             if self.frontier.empty():
                 return 'failure'
             else:
-
                 explored_state = self.frontier.get()
                 print(f'The best state to expand with g(n)={explored_state[1]}'
-                      f' h(n) = {explored_state[0] - explored_state[1]}')
+                      f' h(n) = {explored_state[0] - explored_state[1]} is')
                 s1 = State(explored_state[2], explored_state[3], self.dim,
                            self.heuristic)
-                arrayPrint(s1.state,s1.dim)
+                print(s1.state,sep= " ")
+
                 if np.array_equal(s1.state, self.goal_state):
+                    print("maximum frontier size: ",maximum_frontier_size)
+                    print("expanded nodes: ",expanded_nodes)
+                    depth = sum(1 for letter in s1.prevMoveList if letter.isupper())
+                    print('Depth: ',depth)
                     return 'success', s1.prevMoveList
-                new_states = s1.expand()
-                for i in new_states:
-                    if i[2] not in self.explored_set:
-                        self.explored_set.add(i[2])
-                        depth = sum(1 for letter in i[1] if letter.isupper())
-                        self.frontier.put((i[0] + depth,depth, i[1], stringToArray(i[2])))
+                else:
+                    print('Expanding this node...')
+                    new_states = s1.expand()
+                    expanded_nodes += 1
+                    for i in new_states:
+                        if i[2] not in self.explored_set:
+                            self.explored_set.add(i[2])
+                            depth = sum(1 for letter in i[1] if letter.isupper())
+                            self.frontier.put((i[0] + depth,depth, i[1], stringToArray(i[2])))
             # print(self.explored_set)
 
     def __init__(self, dim, heuristic):
@@ -157,20 +168,21 @@ class Puzzle:
 
 print('Welcome to 862007974 8 puzzle solver.')
 print('Type 1 to use a default puzzle, or 2 to enter your own puzzle')
-#default_custom = input()
-default_custom = 1
+default_custom = input()
+#default_custom = 1
 print('Enter algorithm choice')
 print('1. UCS\n2. Misplaced Tiles\n3. Euclidean Distance')
-#algorithm = input()
-algorithm = 3
+algorithm = input()
+#algorithm = 1
 #print(type(algorithm))
 algorithm_dict = {1 : 'ucs',2: 'misplaced_tiles',3: 'euclidean_distance'}
+p1 = Puzzle(3, algorithm_dict[int(algorithm)])
 if default_custom == '2':
     print("Enter your array as a string Ex: '8 6 7 2 5 4 3 9 1'")
     print("9 is the blank space")
     array = input()
+    p1.set_custom_initial_state(arrayToString(array))
 else:
     #print(algorithm_dict[algorithm])
-    p1 = Puzzle(3, algorithm_dict[int(algorithm)])
-    p1.set_custom_initial_state('8 6 7 2 5 4 3 9 1')
-    print(p1.graph_search())
+    p1.set_custom_initial_state('1 2 3 4 9 6 7 5 8')
+print(p1.graph_search())
