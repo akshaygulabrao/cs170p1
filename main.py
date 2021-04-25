@@ -13,6 +13,7 @@ import math
 # https://numpy.org/doc/stable/reference/generated/numpy.save.html
 # https://www.geeksforgeeks.org/python-math-function-hypot/
 # http://w01fe.com/blog/2009/01/the-hardest-eight-puzzle-instances-take-31-moves-to-solve/#:~:text=Both%20require%20at%20least%2031,starting%20at%20the%20goal%20state).
+# https://stackoverflow.com/questions/18129830/count-the-uppercase-letters-in-a-string-with-python
 
 def stringToArray(string):
     return np.asarray(list(map(int, string.split())))
@@ -30,7 +31,7 @@ def arrayPrint(a,dim):
 class State:
     def __init__(self, prevMoveList, state, dim, heuristic_type):
         self.state = state
-        print(self.state)
+        #print(self.state)
         self.heuristic = 0
         self.heuristic_type = heuristic_type
         self.prevMoveList = prevMoveList
@@ -49,8 +50,9 @@ class State:
         if self.heuristic_type == "euclidean_distance":
             heuristic = 0
             for i in range(0,len(arr)):
-                dist = arr[i] - 1
-                heuristic += math.hypot(dist // 3,dist % 3)
+                destination = arr[i] - 1
+                source = i
+                heuristic += math.hypot(abs(destination - source) // 3,abs(destination - source) % 3)
         self.heuristic = heuristic
 
     def expand(self):
@@ -119,8 +121,7 @@ class Puzzle:
         self.initial_state = stringToArray(string)
 
     def graph_search(self):
-        g_n = 0
-        self.frontier.put((0, g_n, '', self.initial_state))
+        self.frontier.put((0, 0, '', self.initial_state))
         self.explored_set = set()
         while 1:
             # print(self.frontier.queue)
@@ -131,7 +132,6 @@ class Puzzle:
                 explored_state = self.frontier.get()
                 print(f'The best state to expand with g(n)={explored_state[1]}'
                       f' h(n) = {explored_state[0] - explored_state[1]}')
-
                 s1 = State(explored_state[2], explored_state[3], self.dim,
                            self.heuristic)
                 arrayPrint(s1.state,s1.dim)
@@ -141,8 +141,8 @@ class Puzzle:
                 for i in new_states:
                     if i[2] not in self.explored_set:
                         self.explored_set.add(i[2])
-                        self.frontier.put((i[0] + g_n, g_n, i[1], stringToArray(i[2])))
-            g_n += 1
+                        depth = sum(1 for letter in i[1] if letter.isupper())
+                        self.frontier.put((i[0] + depth,depth, i[1], stringToArray(i[2])))
             # print(self.explored_set)
 
     def __init__(self, dim, heuristic):
@@ -157,10 +157,12 @@ class Puzzle:
 
 print('Welcome to 862007974 8 puzzle solver.')
 print('Type 1 to use a default puzzle, or 2 to enter your own puzzle')
-default_custom = input()
+#default_custom = input()
+default_custom = 1
 print('Enter algorithm choice')
 print('1. UCS\n2. Misplaced Tiles\n3. Euclidean Distance')
-algorithm = input()
+#algorithm = input()
+algorithm = 3
 #print(type(algorithm))
 algorithm_dict = {1 : 'ucs',2: 'misplaced_tiles',3: 'euclidean_distance'}
 if default_custom == '2':
